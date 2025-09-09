@@ -1,0 +1,5 @@
+{
+  "name": "EBIOS RM AI Assistant",
+  "description": "An AI-powered web application to assist in conducting EBIOS Risk Manager (RM) analyses, guiding users through key workshops from context definition to identifying dreaded events, in compliance with the ANSSI methodology.",
+  "requestFramePermissions": []
+}

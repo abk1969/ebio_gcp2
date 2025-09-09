@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EBIOS RM AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-primary': '#0D47A1',
+              'brand-secondary': '#1565C0',
+              'brand-accent': '#1E88E5',
+              'brand-light': '#E3F2FD',
+              'brand-dark': '#0A3A81',
+              'text-primary': '#212121',
+              'text-secondary': '#616161',
+            },
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.18.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "uuid": "https://aistudiocdn.com/uuid@^10.0.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; text-align: center; padding: 2rem; color: #212121; background-color: #E3F2FD;">
+        <h1>JavaScript est requis pour utiliser cette application. Veuillez l'activer dans les paramètres de votre navigateur.</h1>
+      </div>
+    </noscript>
+    <div id="chatbot-icon-container" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;">
+      <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-chat" viewBox="0 0 24 24">
+           <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+        </symbol>
+         <symbol id="icon-close" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"/>
+        </symbol>
+      </svg>
+    </div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
