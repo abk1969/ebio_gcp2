@@ -19,6 +19,54 @@ dist-ssr
 .env.test.local
 .env.production.local
 
+# API Keys and sensitive configuration
+# LLM API Keys (stored in localStorage/browser)
+api-keys.json
+llm-config.json
+config.json
+settings.json
+user-config.json
+*.key
+*.secret
+
+# Backup files that might contain API keys
+*.backup
+*.bak
+config.backup.*
+settings.backup.*
+
+# Local storage dumps
+localStorage.json
+sessionStorage.json
+
+# EBIOS RM specific API key storage patterns
+ebios_llm_config.json
+ebios_llm_config.backup
+ebios_llm_config.*.json
+
+# Browser storage exports/dumps
+browser-storage.json
+storage-export.json
+config-export.json
+llm-settings.json
+
+# Development and testing files with potential API keys
+test-config.json
+dev-config.json
+local-config.json
+debug-config.json
+
+# IDE and editor files that might contain API keys
+.vscode/settings.json
+.idea/workspace.xml
+*.code-workspace
+
+# Temporary files that might contain sensitive data
+temp-*.json
+tmp-*.json
+*.tmp
+*.temp
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
