@@ -80,3 +80,4 @@ tmp-*.json
 
 # Ignore embedded git repositories
 ebios_gcp1/
+.vercel
