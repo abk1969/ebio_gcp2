@@ -2,15 +2,111 @@ import type React from 'react';
 
 export enum Severity {
   CRITICAL = 'Critique',
-  HIGH = 'Élevée',
-  MEDIUM = 'Moyenne',
-  LOW = 'Faible',
+  GRAVE = 'Grave',
+  SIGNIFICATIVE = 'Significative',
+  MINEURE = 'Mineure',
 }
 
-export type Likelihood = 'Élevée' | 'Moyenne' | 'Faible';
+export type Likelihood = 'Quasi-certain' | 'Très vraisemblable' | 'Vraisemblable' | 'Peu vraisemblable';
 export type RiskSourceType = 'Humaine' | 'Technique' | 'Environnementale';
+export type RiskSourceProfile =
+  | 'Activiste idéologique'
+  | 'Amateur'
+  | 'Concurrent'
+  | 'Crime organisé'
+  | 'Malveillant pathologique'
+  | 'Officine spécialisée'
+  | 'Terroriste'
+  | 'Vengeur'
+  | 'Étatique';
 export type SecurityMeasureType = 'Préventive' | 'Détective' | 'Corrective';
 export type ChatMessageSender = 'user' | 'ai' | 'system';
+
+// LLM Configuration Types
+export type LLMProvider = 'gemini' | 'ollama' | 'lmstudio' | 'mistral' | 'anthropic' | 'deepseek' | 'qwen' | 'xai' | 'groq' | 'openai';
+
+export interface GeminiConfig {
+  apiKey: string;
+  model: string;
+  baseUrl?: string;
+}
+
+export interface OllamaConfig {
+  baseUrl: string;
+  model: string;
+  apiKey?: string;
+}
+
+export interface LMStudioConfig {
+  baseUrl: string;
+  model: string;
+  apiKey?: string;
+}
+
+export interface MistralConfig {
+  apiKey: string;
+  model: string;
+  baseUrl?: string;
+}
+
+export interface AnthropicConfig {
+  apiKey: string;
+  model: string;
+  baseUrl?: string;
+}
+
+export interface DeepSeekConfig {
+  apiKey: string;
+  model: string;
+  baseUrl?: string;
+}
+
+export interface QwenConfig {
+  apiKey: string;
+  model: string;
+  baseUrl?: string;
+}
+
+export interface XAIConfig {
+  apiKey: string;
+  model: string;
+  baseUrl?: string;
+}
+
+export interface GroqConfig {
+  apiKey: string;
+  model: string;
+  baseUrl?: string;
+}
+
+export interface OpenAIConfig {
+  apiKey: string;
+  model: string;
+  baseUrl?: string;
+}
+
+export interface LLMConfig {
+  provider: LLMProvider;
+  gemini: GeminiConfig;
+  ollama: OllamaConfig;
+  lmstudio: LMStudioConfig;
+  mistral: MistralConfig;
+  anthropic: AnthropicConfig;
+  deepseek: DeepSeekConfig;
+  qwen: QwenConfig;
+  xai: XAIConfig;
+  groq: GroqConfig;
+  openai: OpenAIConfig;
+}
+
+export interface LLMResponse {
+  text: string;
+  usage?: {
+    promptTokens?: number;
+    completionTokens?: number;
+    totalTokens?: number;
+  };
+}
 
 export interface BusinessValue {
   id: string;
@@ -30,6 +126,7 @@ export interface RiskSource {
   name: string;
   description: string;
   type: RiskSourceType;
+  profile?: RiskSourceProfile;
 }
 
 export interface StrategicScenario {
@@ -38,6 +135,8 @@ export interface StrategicScenario {
   dreadedEventId: string;
   description: string;
   likelihood: Likelihood;
+  residualLikelihood?: Likelihood;
+  residualLikelihoodJustification?: string;
 }
 
 export interface OperationalScenario {

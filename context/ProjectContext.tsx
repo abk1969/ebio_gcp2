@@ -32,7 +32,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       // The orchestrator will call the specific setter functions internally.
       // This approach centralizes the agent logic.
       await runWorkshopAgent(stepId, project, setProject, payload);
-  }, [project]);
+  }, [project.context, project.securityBaseline, project.businessValues.length, project.dreadedEvents.length, project.riskSources.length, project.strategicScenarios.length, project.operationalScenarios.length, project.securityMeasures.length]);
 
 
   const contextValue = useMemo<ProjectContextType>(() => ({

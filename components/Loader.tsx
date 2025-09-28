@@ -2,10 +2,10 @@
 import React from 'react';
 
 interface LoaderProps {
-  text: string;
+  readonly text: string;
 }
 
-const Loader: React.FC<LoaderProps> = ({ text }) => {
+const Loader: React.FC<LoaderProps> = React.memo(({ text }) => {
   return (
     <div className="flex flex-col items-center justify-center p-8 bg-brand-light/50 rounded-lg">
       <svg className="animate-spin h-8 w-8 text-brand-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -15,6 +15,8 @@ const Loader: React.FC<LoaderProps> = ({ text }) => {
       <p className="mt-4 text-brand-dark font-medium">{text}</p>
     </div>
   );
-};
+});
+
+Loader.displayName = 'Loader';
 
 export default Loader;

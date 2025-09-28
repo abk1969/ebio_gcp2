@@ -44,7 +44,7 @@ const Chatbot: React.FC = () => {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error("Erreur de l'agent chatbot:", error);
-      const errorMessage: ChatMessage = { id: uuidv4(), sender: 'system', text: `Désolé, une erreur est survenue : ${error.message}` };
+      const errorMessage: ChatMessage = { id: uuidv4(), sender: 'system', text: `Désolé, une erreur est survenue : ${error instanceof Error ? error.message : 'Erreur inconnue'}` };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
