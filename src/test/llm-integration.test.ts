@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { LLMServiceFactory } from '../../services/llmService';
-import configService from '../../services/configService';
-import type { LLMProvider } from '../../types';
+import { LLMServiceFactory } from '../services/llmService';
+import configService from '../services/configService';
+import type { LLMProvider } from '../types';
 
 describe('LLM Integration Tests', () => {
   const testProviders: LLMProvider[] = [
