@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import Settings from './components/Settings';
-import Step1Cadrage from './components/steps/Step1Context';
-import Step2_3_Scenarios from './components/steps/Step2Scenarios';
-import Step4_5_6_Synthesis from './components/steps/Step3Synthesis';
-import Chatbot from './components/Chatbot';
-import ExportModal from './components/ExportModal';
-import { ProjectProvider, useProject } from './context/ProjectContext';
-import { STEPS } from './constants';
-import { exportToPdf, exportToExcel } from './services/exportService';
+import Header from './components/Header.tsx';
+import Sidebar from './components/Sidebar.tsx';
+import Settings from './components/Settings.tsx';
+import Step1Cadrage from './components/steps/Step1Context.tsx';
+import Step2_3_Scenarios from './components/steps/Step2Scenarios.tsx';
+import Step4_5_6_Synthesis from './components/steps/Step3Synthesis.tsx';
+import Chatbot from './components/Chatbot.tsx';
+import ExportModal from './components/ExportModal.tsx';
+import { ProjectProvider, useProject } from './context/ProjectContext.tsx';
+import { STEPS } from './constants.ts';
+import { exportToPdf, exportToExcel } from './services/exportService.ts';
 
 const AppContent: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
