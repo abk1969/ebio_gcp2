@@ -53,11 +53,40 @@ const isLocalDevelopment = (): boolean => {
 };
 
 /**
- * Utilise le proxy local si disponible pour contourner CORS
+ * Providers qui nécessitent un proxy pour contourner CORS
+ */
+const PROVIDERS_NEEDING_PROXY = ['anthropic', 'openai', 'mistral', 'deepseek', 'qwen', 'xai', 'groq'];
+
+/**
+ * Utilise le proxy Vercel ou local pour contourner CORS
  */
 const useProxyIfNeeded = async (url: string, options: RequestInit, provider: string): Promise<Response> => {
-  // Pour Anthropic en développement local, utiliser le proxy
-  if (provider === 'anthropic' && isLocalDevelopment()) {
+  // Si le provider ne nécessite pas de proxy, appel direct
+  if (!PROVIDERS_NEEDING_PROXY.includes(provider)) {
+    return fetch(url, options);
+  }
+
+  // En production (Vercel), utiliser le proxy Vercel
+  if (!isLocalDevelopment()) {
+    const proxyUrl = `/api/llm-proxy?provider=${provider}`;
+    console.log(`[${provider}] Utilisation du proxy Vercel pour contourner CORS`);
+
+    // Extraire l'API key des headers
+    const headers = options.headers as Record<string, string> || {};
+    const apiKey = headers['x-api-key'] || headers['Authorization'] || '';
+
+    return fetch(proxyUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+      },
+      body: options.body,
+    });
+  }
+
+  // En développement local, essayer le proxy local pour Anthropic
+  if (provider === 'anthropic') {
     const proxyUrl = 'http://localhost:3001/api/anthropic/messages';
     console.log(`[${provider}] Tentative d'utilisation du proxy local pour contourner CORS...`);
 
@@ -88,7 +117,8 @@ const useProxyIfNeeded = async (url: string, options: RequestInit, provider: str
     throw new Error('CORS Error - Anthropic nécessite un proxy. Lancez "npm run dev:proxy" dans un autre terminal ou double-cliquez sur start-proxy.bat');
   }
 
-  // Pour les autres cas, appel direct
+  // Pour les autres providers en local, appel direct (ils échoueront avec CORS)
+  console.warn(`[${provider}] ⚠️ Appel direct - CORS peut bloquer la requête`);
   return fetch(url, options);
 };
 
@@ -817,11 +847,11 @@ export class MistralService implements LLMService {
       };
 
       const baseUrl = this.config.baseUrl || 'https://api.mistral.ai';
-      const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+      const response = await useProxyIfNeeded(`${baseUrl}/v1/chat/completions`, {
         method: 'POST',
         headers,
         body: JSON.stringify(requestBody)
-      });
+      }, 'mistral');
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -971,11 +1001,11 @@ export class DeepSeekService implements LLMService {
       };
 
       const baseUrl = this.config.baseUrl || 'https://api.deepseek.com';
-      const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+      const response = await useProxyIfNeeded(`${baseUrl}/v1/chat/completions`, {
         method: 'POST',
         headers,
         body: JSON.stringify(requestBody)
-      });
+      }, 'deepseek');
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => '');
@@ -1058,11 +1088,11 @@ export class QwenService implements LLMService {
       console.log(`[Qwen] Modèle utilisé: ${this.config.model}`);
       console.log(`[Qwen] Clé API configurée: ${this.config.apiKey ? 'Oui' : 'Non'}`);
 
-      const response = await fetch(url, {
+      const response = await useProxyIfNeeded(url, {
         method: 'POST',
         headers,
         body: JSON.stringify(requestBody)
-      });
+      }, 'qwen');
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => 'Impossible de lire la réponse d\'erreur');
@@ -1154,11 +1184,11 @@ export class XAIService implements LLMService {
         };
 
         const baseUrl = this.config.baseUrl || 'https://api.x.ai';
-        const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+        const response = await useProxyIfNeeded(`${baseUrl}/v1/chat/completions`, {
           method: 'POST',
           headers,
           body: JSON.stringify(requestBody)
-        });
+        }, 'xai');
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -1234,11 +1264,11 @@ export class GroqService implements LLMService {
       };
 
       const baseUrl = this.config.baseUrl || 'https://api.groq.com/openai';
-      const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+      const response = await useProxyIfNeeded(`${baseUrl}/v1/chat/completions`, {
         method: 'POST',
         headers,
         body: JSON.stringify(requestBody)
-      });
+      }, 'groq');
 
       if (!response.ok) {
         throw new Error(`Erreur Groq: ${response.status} ${response.statusText}`);
@@ -1326,11 +1356,11 @@ export class OpenAIService implements LLMService {
       console.log(`[OpenAI] Clé API configurée: ${this.config.apiKey ? 'Oui' : 'Non'}`);
       console.log(`[OpenAI] Payload envoyé:`, JSON.stringify(requestBody, null, 2));
 
-      const response = await fetch(url, {
+      const response = await useProxyIfNeeded(url, {
         method: 'POST',
         headers,
         body: JSON.stringify(requestBody)
-      });
+      }, 'openai');
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
