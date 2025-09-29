@@ -24,6 +24,13 @@ const PROVIDER_URLS: Record<string, string> = {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log('[Proxy] Requête reçue:', {
+    method: req.method,
+    url: req.url,
+    query: req.query,
+    headers: Object.keys(req.headers)
+  });
+
   // Ajouter les headers CORS à toutes les réponses
   Object.entries(corsHeaders).forEach(([key, value]) => {
     res.setHeader(key, value);
@@ -31,12 +38,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // Gérer les requêtes OPTIONS (preflight CORS)
   if (req.method === 'OPTIONS') {
+    console.log('[Proxy] Réponse OPTIONS (preflight)');
     return res.status(200).end();
   }
 
   // Seules les requêtes POST sont autorisées
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    console.error('[Proxy] Méthode non autorisée:', req.method);
+    return res.status(405).json({ error: 'Method not allowed', method: req.method });
   }
 
   try {
