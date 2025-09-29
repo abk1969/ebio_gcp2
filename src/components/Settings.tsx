@@ -249,7 +249,7 @@ const Settings: React.FC = () => {
                 onChange={(e) => handleConfigChange('anthropic', 'model', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent"
               >
-                <option value="claude-sonnet-4-20250514">Claude Sonnet 4 (Recommandé)</option>
+                <option value="claude-sonnet-4-20250514">Claude Sonnet 4.5 (Recommandé)</option>
                 <option value="claude-opus-4-20250514">Claude Opus 4</option>
                 <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (2024-10-22)</option>
                 <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku (2024-10-22)</option>
@@ -567,7 +567,7 @@ const Settings: React.FC = () => {
                   {provider === 'gemini' && 'Gemini 2.5 Pro/Flash - Google'}
                   {provider === 'openai' && 'GPT-4o et modèles OpenAI'}
                   {provider === 'mistral' && 'Mistral Large 2407 - Mistral AI'}
-                  {provider === 'anthropic' && 'Claude 3.5 Sonnet - Anthropic'}
+                  {provider === 'anthropic' && 'Claude Sonnet 4.5 - Anthropic'}
                   {provider === 'deepseek' && 'DeepSeek-V3 - DeepSeek'}
                   {provider === 'qwen' && 'Qwen Max - Alibaba'}
                   {provider === 'xai' && 'Grok 4 - xAI'}
