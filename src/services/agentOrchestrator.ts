@@ -17,7 +17,10 @@ const getLLMService = (): LLMService => {
   const { provider } = config;
   const providerConfig = config[provider];
 
-  console.log(`[LLM] Initialisation du service pour le fournisseur: ${provider}`);
+  console.log(`[LLM] ===== DEBUG PROVIDER SELECTION =====`);
+  console.log(`[LLM] Provider sélectionné: ${provider}`);
+  console.log(`[LLM] Configuration complète:`, JSON.stringify(config, null, 2));
+  console.log(`[LLM] ========================================`);
 
   if (!providerConfig) {
     console.error(`[LLM] Configuration introuvable pour le fournisseur ${provider}`);

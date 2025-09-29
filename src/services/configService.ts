@@ -70,16 +70,22 @@ class ConfigService {
    * Charge la configuration depuis le localStorage
    */
   private loadConfig(): LLMConfig {
+    console.log('[ConfigService] ===== LOAD CONFIG =====');
+
     // Vérifier si nous sommes côté client
     if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      console.log('[ConfigService] localStorage non disponible - utilisation config par défaut');
       // Côté serveur ou environnement sans localStorage
       return this.getDefaultConfigWithEnv();
     }
 
     try {
       const stored = secureStorage.getItem(CONFIG_STORAGE_KEY);
+      console.log('[ConfigService] Données localStorage:', stored ? 'trouvées' : 'non trouvées');
+
       if (stored) {
         const parsedConfig = JSON.parse(stored);
+        console.log('[ConfigService] Provider chargé depuis localStorage:', parsedConfig.provider);
 
         // Nettoyer les modèles Gemini avec -latest (qui ne sont plus supportés)
         if (parsedConfig.gemini?.model?.includes('-latest')) {
@@ -88,7 +94,7 @@ class ConfigService {
         }
 
         // Merge avec la config par défaut pour s'assurer que toutes les propriétés existent
-        return {
+        const mergedConfig = {
           ...DEFAULT_CONFIG,
           ...parsedConfig,
           gemini: { ...DEFAULT_CONFIG.gemini, ...parsedConfig.gemini },
@@ -102,11 +108,17 @@ class ConfigService {
           groq: { ...DEFAULT_CONFIG.groq, ...parsedConfig.groq },
           openai: { ...DEFAULT_CONFIG.openai, ...parsedConfig.openai }
         };
+
+        console.log('[ConfigService] Provider après merge:', mergedConfig.provider);
+        console.log('[ConfigService] ===========================');
+        return mergedConfig;
       }
     } catch (error) {
       console.warn('Erreur lors du chargement de la configuration LLM:', error);
     }
 
+    console.log('[ConfigService] Utilisation config par défaut, provider:', DEFAULT_CONFIG.provider);
+    console.log('[ConfigService] ===========================');
     return this.getDefaultConfigWithEnv();
   }
 
@@ -162,6 +174,9 @@ class ConfigService {
       return;
     }
 
+    console.log('[ConfigService] ===== SAVE CONFIG =====');
+    console.log('[ConfigService] Provider à sauvegarder:', this.config.provider);
+
     try {
       // Créer une copie de la config avec les clés API chiffrées
       const configToSave = {
@@ -205,6 +220,8 @@ class ConfigService {
       };
 
       secureStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(configToSave), true);
+      console.log('[ConfigService] Configuration sauvegardée avec succès');
+      console.log('[ConfigService] ===========================');
       this.notifyListeners();
     } catch (error) {
       console.error('Erreur lors de la sauvegarde de la configuration LLM:', error);
@@ -240,6 +257,10 @@ class ConfigService {
    * Met à jour la configuration complète
    */
   updateConfig(newConfig: Partial<LLMConfig>): void {
+    console.log('[ConfigService] ===== UPDATE CONFIG =====');
+    console.log('[ConfigService] Ancien provider:', this.config.provider);
+    console.log('[ConfigService] Nouveau provider:', newConfig.provider);
+
     this.config = {
       ...this.config,
       ...newConfig,
@@ -254,6 +275,10 @@ class ConfigService {
       groq: { ...this.config.groq, ...newConfig.groq },
       openai: { ...this.config.openai, ...newConfig.openai }
     };
+
+    console.log('[ConfigService] Provider après merge:', this.config.provider);
+    console.log('[ConfigService] ============================');
+
     this.saveConfig();
   }
 
