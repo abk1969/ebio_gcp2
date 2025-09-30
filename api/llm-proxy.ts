@@ -118,15 +118,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ok: response.ok
     });
 
-    // Récupérer la réponse
+    // Récupérer la réponse en texte d'abord pour pouvoir logger en cas d'erreur
+    const responseText = await response.text();
+    console.log('[Proxy] Response text length:', responseText.length);
+
+    // Parser le JSON
     let data;
     try {
-      data = await response.json();
+      data = JSON.parse(responseText);
     } catch (jsonError) {
       console.error('[Proxy] Failed to parse response as JSON:', jsonError);
-      const textResponse = await response.text();
-      console.error('[Proxy] Response text:', textResponse.substring(0, 500));
-      throw new Error(`Invalid JSON response from ${provider}`);
+      console.error('[Proxy] Response text preview:', responseText.substring(0, 500));
+      return res.status(500).json({
+        error: 'Invalid JSON response from provider',
+        message: `Failed to parse ${provider} response`,
+        preview: responseText.substring(0, 200)
+      });
     }
 
     // Retourner la réponse avec les headers CORS
