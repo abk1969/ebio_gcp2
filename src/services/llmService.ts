@@ -71,9 +71,16 @@ const useProxyIfNeeded = async (url: string, options: RequestInit, provider: str
     const proxyUrl = `/api/llm-proxy?provider=${provider}`;
     console.log(`[${provider}] Utilisation du proxy Vercel pour contourner CORS`);
 
-    // Extraire l'API key des headers
-    const headers = options.headers as Record<string, string> || {};
-    const apiKey = headers['x-api-key'] || headers['Authorization'] || '';
+    // Extraire l'API key des headers - supporter Record et Headers
+    let apiKey = '';
+    if (options.headers) {
+      if (options.headers instanceof Headers) {
+        apiKey = options.headers.get('x-api-key') || options.headers.get('Authorization') || '';
+      } else {
+        const headers = options.headers as Record<string, string>;
+        apiKey = headers['x-api-key'] || headers['Authorization'] || '';
+      }
+    }
 
     // Parser le body si c'est une string, sinon utiliser tel quel
     let bodyToSend = options.body;
@@ -90,6 +97,8 @@ const useProxyIfNeeded = async (url: string, options: RequestInit, provider: str
     console.log(`[${provider}] Envoi au proxy:`, {
       url: proxyUrl,
       hasApiKey: !!apiKey,
+      apiKeyLength: apiKey?.length || 0,
+      apiKeyPreview: apiKey ? apiKey.substring(0, 15) + '...' : 'EMPTY',
       bodyLength: bodyToSend?.toString().length || 0
     });
 
@@ -939,6 +948,13 @@ export class AnthropicService implements LLMService {
         'x-api-key': this.config.apiKey,
         'anthropic-version': '2023-06-01'
       };
+
+      console.log('[Anthropic] API Key check:', {
+        hasApiKey: !!this.config.apiKey,
+        keyLength: this.config.apiKey?.length || 0,
+        keyPreview: this.config.apiKey?.substring(0, 10) + '...' || 'EMPTY',
+        model: this.config.model
+      });
 
       const baseUrl = this.config.baseUrl || 'https://api.anthropic.com';
       const response = await useProxyIfNeeded(`${baseUrl}/v1/messages`, {
