@@ -24,13 +24,13 @@ const PROVIDER_URLS: Record<string, string> = {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  console.log('[Proxy] ===== REQUÊTE PROXY =====');
-  console.log('[Proxy] Requête reçue:', {
+  console.log('[Proxy] ===== REQUEST RECEIVED =====');
+  console.log('[Proxy] Request details:', {
     method: req.method,
     url: req.url,
     query: req.query,
     headers: Object.keys(req.headers),
-    body: req.body ? 'présent' : 'absent'
+    hasBody: !!req.body
   });
 
   // Ajouter les headers CORS à toutes les réponses
@@ -147,17 +147,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   } catch (error) {
     console.error('[Proxy] Error:', error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       error: 'Internal proxy error',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack?.substring(0, 500) : undefined
     });
   }
 }
-
-// Configuration Vercel pour les headers CORS
-export const config = {
-  api: {
-    bodyParser: true,
-  },
-};
-
