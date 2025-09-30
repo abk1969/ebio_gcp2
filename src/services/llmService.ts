@@ -75,13 +75,31 @@ const useProxyIfNeeded = async (url: string, options: RequestInit, provider: str
     const headers = options.headers as Record<string, string> || {};
     const apiKey = headers['x-api-key'] || headers['Authorization'] || '';
 
+    // Parser le body si c'est une string, sinon utiliser tel quel
+    let bodyToSend = options.body;
+    if (typeof bodyToSend === 'string') {
+      try {
+        // Le body est déjà stringifié, on le parse puis le re-stringify pour être sûr
+        const parsed = JSON.parse(bodyToSend);
+        bodyToSend = JSON.stringify(parsed);
+      } catch (e) {
+        console.warn(`[${provider}] Body n'est pas du JSON valide:`, bodyToSend);
+      }
+    }
+
+    console.log(`[${provider}] Envoi au proxy:`, {
+      url: proxyUrl,
+      hasApiKey: !!apiKey,
+      bodyLength: bodyToSend?.toString().length || 0
+    });
+
     return fetch(proxyUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
       },
-      body: options.body,
+      body: bodyToSend,
     });
   }
 

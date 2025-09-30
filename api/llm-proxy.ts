@@ -98,7 +98,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         : `Bearer ${apiKey}`;
     }
 
-    console.log(`[Proxy] Forwarding request to ${provider}:`, targetUrl);
+    console.log(`[Proxy] Forwarding request to ${provider}:`, {
+      targetUrl,
+      headers: Object.keys(headers),
+      bodySize: JSON.stringify(req.body).length,
+      bodyPreview: JSON.stringify(req.body).substring(0, 200)
+    });
 
     // Faire l'appel à l'API cible
     const response = await fetch(targetUrl, {
@@ -107,8 +112,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       body: JSON.stringify(req.body),
     });
 
+    console.log(`[Proxy] Response from ${provider}:`, {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok
+    });
+
     // Récupérer la réponse
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.error('[Proxy] Failed to parse response as JSON:', jsonError);
+      const textResponse = await response.text();
+      console.error('[Proxy] Response text:', textResponse.substring(0, 500));
+      throw new Error(`Invalid JSON response from ${provider}`);
+    }
 
     // Retourner la réponse avec les headers CORS
     if (!response.ok) {
