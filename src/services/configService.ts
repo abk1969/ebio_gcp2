@@ -61,9 +61,25 @@ const DEFAULT_CONFIG: LLMConfig = {
 class ConfigService {
   private config: LLMConfig;
   private listeners: Array<(config: LLMConfig) => void> = [];
+  private isInitialized: boolean = false;
 
   constructor() {
     this.config = this.loadConfig();
+
+    // Attendre que le DOM soit chargé pour réessayer de charger depuis localStorage
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          if (!this.isInitialized) {
+            this.config = this.loadConfig();
+            this.isInitialized = true;
+            this.notifyListeners();
+          }
+        });
+      } else {
+        this.isInitialized = true;
+      }
+    }
   }
 
   /**
@@ -73,8 +89,8 @@ class ConfigService {
     console.log('[ConfigService] ===== LOAD CONFIG =====');
 
     // Vérifier si nous sommes côté client
-    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
-      console.log('[ConfigService] localStorage non disponible - utilisation config par défaut');
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined' || typeof document === 'undefined') {
+      console.log('[ConfigService] localStorage non disponible (SSR ou environnement serveur) - utilisation config par défaut');
       // Côté serveur ou environnement sans localStorage
       return this.getDefaultConfigWithEnv();
     }
@@ -168,8 +184,8 @@ class ConfigService {
    */
   private saveConfig(): void {
     // Vérifier si nous sommes côté client
-    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
-      console.warn('localStorage non disponible - configuration non sauvegardée');
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined' || typeof document === 'undefined') {
+      console.warn('[ConfigService] localStorage non disponible (SSR) - configuration non sauvegardée');
       this.notifyListeners();
       return;
     }
