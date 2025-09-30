@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "ebios-rm-ai-assistant",
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
@@ -13,7 +12,6 @@
   },
   "functions": {
     "api/**/*.ts": {
-      "runtime": "@vercel/node@latest",
       "memory": 1024,
       "maxDuration": 30
     }
