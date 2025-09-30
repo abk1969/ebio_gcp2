@@ -7,6 +7,7 @@ import Step2_3_Scenarios from './components/steps/Step2Scenarios';
 import Step4_5_6_Synthesis from './components/steps/Step3Synthesis';
 import Chatbot from './components/Chatbot';
 import ExportModal from './components/ExportModal';
+import DiagnosticPanel from './components/DiagnosticPanel';
 import { ProjectProvider, useProject } from './context/ProjectContext';
 import { STEPS } from './constants';
 import { exportToPdf, exportToExcel } from './services/exportService';
@@ -150,6 +151,7 @@ const AppContent: React.FC = () => {
         </main>
       </div>
       <Chatbot />
+      <DiagnosticPanel />
       <ExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
