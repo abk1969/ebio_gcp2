@@ -91,8 +91,8 @@ class ConfigService {
     // Vérifier si nous sommes côté client
     if (typeof window === 'undefined' || typeof localStorage === 'undefined' || typeof document === 'undefined') {
       console.log('[ConfigService] localStorage non disponible (SSR ou environnement serveur) - utilisation config par défaut');
-      // Côté serveur ou environnement sans localStorage
-      return this.getDefaultConfigWithEnv();
+      // Côté serveur ou environnement sans localStorage - NE JAMAIS charger depuis .env
+      return DEFAULT_CONFIG;
     }
 
     try {
@@ -135,47 +135,7 @@ class ConfigService {
 
     console.log('[ConfigService] Utilisation config par défaut, provider:', DEFAULT_CONFIG.provider);
     console.log('[ConfigService] ===========================');
-    return this.getDefaultConfigWithEnv();
-  }
-
-  /**
-   * Retourne la configuration par défaut avec les variables d'environnement
-   * ATTENTION: Les clés API ne doivent jamais être exposées côté client
-   */
-  private getDefaultConfigWithEnv(): LLMConfig {
-    // En développement uniquement, essayer de récupérer depuis les variables d'environnement
-    // En production, les clés doivent être saisies par l'utilisateur
-    if (process.env.NODE_ENV === 'development') {
-      const envGeminiKey = (typeof process !== 'undefined' && process.env)
-        ? (process.env.API_KEY || process.env.GEMINI_API_KEY)
-        : '';
-
-      const envOpenAIKey = (typeof process !== 'undefined' && process.env)
-        ? process.env.OPENAI_API_KEY
-        : '';
-
-      if (envGeminiKey || envOpenAIKey) {
-        console.warn('🔒 Clé(s) API chargée(s) depuis l\'environnement (développement uniquement)');
-        const config = { ...DEFAULT_CONFIG };
-
-        if (envGeminiKey) {
-          config.gemini = {
-            ...DEFAULT_CONFIG.gemini,
-            apiKey: envGeminiKey
-          };
-        }
-
-        if (envOpenAIKey) {
-          config.openai = {
-            ...DEFAULT_CONFIG.openai,
-            apiKey: envOpenAIKey
-          };
-        }
-
-        return config;
-      }
-    }
-
+    // NE JAMAIS charger depuis .env - uniquement depuis l'interface Settings
     return DEFAULT_CONFIG;
   }
 
