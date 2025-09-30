@@ -11,11 +11,14 @@
   "env": {
     "NODE_ENV": "production"
   },
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node@latest",
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    },
     {
       "source": "/((?!assets/|api/).*)",
       "destination": "/index.html"

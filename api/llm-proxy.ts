@@ -24,11 +24,13 @@ const PROVIDER_URLS: Record<string, string> = {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log('[Proxy] ===== REQUÊTE PROXY =====');
   console.log('[Proxy] Requête reçue:', {
     method: req.method,
     url: req.url,
     query: req.query,
-    headers: Object.keys(req.headers)
+    headers: Object.keys(req.headers),
+    body: req.body ? 'présent' : 'absent'
   });
 
   // Ajouter les headers CORS à toutes les réponses
@@ -51,18 +53,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // Extraire le provider depuis l'URL ou le body
     const { provider } = req.query;
-    
+
     if (!provider || typeof provider !== 'string') {
+      console.error('[Proxy] Provider manquant dans la requête');
       return res.status(400).json({ error: 'Provider parameter is required' });
     }
+
+    console.log('[Proxy] Provider détecté:', provider);
 
     // Vérifier que le provider est supporté
     const targetUrl = PROVIDER_URLS[provider];
     if (!targetUrl) {
-      return res.status(400).json({ 
+      console.error('[Proxy] Provider non supporté:', provider);
+      return res.status(400).json({
         error: `Unsupported provider: ${provider}`,
         supportedProviders: Object.keys(PROVIDER_URLS)
       });
+    }
+
+    // Vérifier que le body existe
+    if (!req.body) {
+      console.error('[Proxy] Body manquant dans la requête');
+      return res.status(400).json({ error: 'Request body is required' });
     }
 
     // Extraire les headers nécessaires
